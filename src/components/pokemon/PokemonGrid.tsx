@@ -1,7 +1,7 @@
-import { PokemonData } from '@/pages/pokemon'
+import { PokemonMetaData } from '@/common/types'
 
 type Props = {
-  pokemons: PokemonData[]
+  pokemons: PokemonMetaData[]
 }
 
 export const PokemonGrid = ({ pokemons }: Props) => {

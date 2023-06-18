@@ -1,33 +1,27 @@
-import { PokemonGrid } from '@/components/pokemon/PokemonGrid'
+import { PokemonMetaData } from '@/common/types'
+import { PokemonGrid } from '@/components/pokemon'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
 import Link from 'next/link'
 
-export type PokemonData = {
-  name: string
-  url: string
-}
-
-type APIResponse = {
+type EndpointResponse = {
   count: number
   next: string | null
   previous: string | null
-  results: PokemonData[] | null
+  results: PokemonMetaData[] | null
 }
 
 export const getServerSideProps: GetServerSideProps<{
-  pokemons: PokemonData[]
+  pokemons: PokemonMetaData[]
 }> = async () => {
   const res = await fetch('https://pokeapi.co/api/v2/pokemon/')
-  const data: APIResponse = await res.json()
-  console.log('API response: ', data)
+  const data: EndpointResponse = await res.json()
   return { props: { pokemons: data.results || [] } }
 }
 
 export default function PokemonPage({
   pokemons
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.log('Pokemon Data 🔥:', pokemons)
   return (
     <>
       <Head>
