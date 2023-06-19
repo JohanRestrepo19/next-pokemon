@@ -1,8 +1,10 @@
-import { PokemonMetaData } from '@/common/types'
-import { PokemonGrid } from '@/components/pokemon'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import Link from 'next/link'
+import { PokemonGrid } from '@/components/pokemon'
+import { PokemonMetaData } from '@/common/types'
+import { NextPageWithLayout } from '../_app'
+import { ReactElement } from 'react'
+import { PokemonLayout } from '@/layouts/pokemon/Pokemon'
 
 type EndpointResponse = {
   count: number
@@ -19,20 +21,23 @@ export const getServerSideProps: GetServerSideProps<{
   return { props: { pokemons: data.results || [] } }
 }
 
-export default function PokemonPage({
-  pokemons
-}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+const PokemonPage: NextPageWithLayout<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+> = ({ pokemons }) => {
   return (
     <>
       <Head>
-        <title>{'Pokemon list'}</title>
+        <title>Pokemon list</title>
       </Head>
-
       <div>
-        <h1>PokemonPage</h1>
         <PokemonGrid pokemons={pokemons} />
       </div>
-      <Link href={'/'}>Home</Link>
     </>
   )
 }
+
+PokemonPage.getLayout = function getLayout(page: ReactElement) {
+  return <PokemonLayout>{page}</PokemonLayout>
+}
+
+export default PokemonPage
