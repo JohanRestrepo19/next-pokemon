@@ -32,11 +32,11 @@ const PokemonDetails: NextPageWithLayout<
 
   return (
     <section className="flex justify-center">
-      <div className="card w-96 glass shadow-2xl">
+      <div className="card glass w-96 shadow-2xl">
         <figure className="relative h-64">
           <Image
             src={imgSrc}
-            className="scale-95 hover:scale-100 ease-in-out duration-300"
+            className="scale-95 duration-300 ease-in-out hover:scale-100"
             fill
             alt="Picture of pokemon"
             priority
@@ -80,7 +80,7 @@ const PokemonDetails: NextPageWithLayout<
           <br />
 
           <div className="card-actions justify-center">
-            <Link href="/pokemon" className="btn btn-primary">
+            <Link href="/pokemon" className="btn-primary btn">
               Volver
             </Link>
           </div>
