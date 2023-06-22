@@ -9,6 +9,12 @@ type Ability = {
   ability: { name: string; url: string }
 }
 
+type Stat = {
+  base_stat: number
+  effort: number
+  stat: { name: string; url: string }
+}
+
 type Sprites = {
   back_default: string
   back_female: null
@@ -19,7 +25,7 @@ type Sprites = {
   front_shiny: string
   front_shiny_female: null
   other?: {
-    dream_world: DreamWorld
+    dream_world: { front_default: string }
     home: Home
     'official-artwork': { front_default: string }
   }
@@ -35,4 +41,5 @@ export type Pokemon = {
   weight: number
   abilities: Ability[]
   sprites: Sprites
+  stats: Stat[]
 }

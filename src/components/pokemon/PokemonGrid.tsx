@@ -9,7 +9,10 @@ export const PokemonGrid = ({ pokemons }: Props) => {
   return (
     <ul className="flex flex-wrap justify-center items-center gap-4">
       {pokemons.map(pokemon => (
-        <li key={pokemon.name} className="card w-96 bg-primary-focus shadow-xl">
+        <li
+          key={pokemon.name}
+          className="card w-96 bg-primary-focus shadow-xl hover:scale-110 ease-in duration-300"
+        >
           <Link
             href={`/pokemon/${pokemon.name}`}
             className="card-body text-center text-primary-content"
