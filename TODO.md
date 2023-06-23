@@ -1,6 +1,6 @@
 1.  **Pages**:
-    - [ ] Sing in. -> /login
-    - [ ] Sign up -> /register
+    - [ ] Sign in. -> /sign-in
+    - [ ] Sign up -> /sign-up
     - [x] Pokemon list -> /pokemon
       - [x] Show pokemon list
       - [x] Include animations in pokemon cards
