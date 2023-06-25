@@ -1,4 +1,3 @@
-//TODO: Search if it is better to use client-side-rendering.
 import { ReactElement, useMemo, useState } from 'react'
 import {
   GetServerSideProps,
@@ -12,6 +11,7 @@ import { NextPageWithLayout } from '../_app'
 import { Pokemon } from '@/common/types'
 import Head from 'next/head'
 
+//TODO: Search if it is better to use client-side-rendering.
 export const getServerSideProps: GetServerSideProps<{
   pokemon: Pokemon
 }> = async (ctx: GetServerSidePropsContext) => {
@@ -34,17 +34,19 @@ const PokemonDetails: NextPageWithLayout<
   return (
     <>
       <Head>
-        <title>{pokemon.name} Info</title>
+        <title>{`${pokemon.name} Info`}</title>
       </Head>
       <section className="flex justify-center">
         <div className="card glass w-96 shadow-2xl">
           <figure className="relative h-64">
             <Image
               src={imgSrc}
-              className="scale-95 duration-300 ease-in-out hover:scale-100"
-              fill
+              className="h-auto w-auto scale-95 duration-300 ease-in-out hover:scale-100"
+              width={250}
+              height={250}
               alt="Picture of pokemon"
-              priority
+              placeholder="blur"
+              blurDataURL={imgSrc}
               onMouseEnter={() => setIsImgHovered(true)}
               onMouseLeave={() => setIsImgHovered(false)}
             />
