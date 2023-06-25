@@ -1,5 +1,6 @@
 import { ReactElement, ReactNode } from 'react'
 import { NextPage } from 'next'
+import initAuth from '@/setup/firebase'
 import type { AppProps } from 'next/app'
 import '@/styles/globals.css'
 
@@ -10,6 +11,8 @@ export type NextPageWithLayout<P = {}, IP = P> = NextPage<P, IP> & {
 type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
+
+initAuth()
 
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page)

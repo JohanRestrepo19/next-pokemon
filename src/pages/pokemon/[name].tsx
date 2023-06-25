@@ -10,19 +10,25 @@ import { PokemonLayout } from '@/layouts/pokemon/Pokemon'
 import { NextPageWithLayout } from '../_app'
 import { Pokemon } from '@/common/types'
 import Head from 'next/head'
+import {
+  useAuthUser,
+  withAuthUser,
+  withAuthUserTokenSSR
+} from 'next-firebase-auth'
 
 //TODO: Search if it is better to use client-side-rendering.
 export const getServerSideProps: GetServerSideProps<{
   pokemon: Pokemon
-}> = async (ctx: GetServerSidePropsContext) => {
+}> = withAuthUserTokenSSR()(async (ctx: GetServerSidePropsContext) => {
   const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${ctx.query.name}`)
   const data: Pokemon = await res.json()
   return { props: { pokemon: data } }
-}
+})
 
 const PokemonDetails: NextPageWithLayout<
   InferGetServerSidePropsType<typeof getServerSideProps>
 > = ({ pokemon }) => {
+  const authUser = useAuthUser()
   const [isImgHovered, setIsImgHovered] = useState<boolean>(false)
 
   const imgSrc: string = useMemo(() => {
@@ -30,6 +36,8 @@ const PokemonDetails: NextPageWithLayout<
       return pokemon.sprites.other?.['official-artwork'].front_default || ''
     return pokemon.sprites.other?.dream_world.front_default || ''
   }, [isImgHovered, pokemon])
+
+  console.log('Auth user: ', authUser)
 
   return (
     <>
@@ -102,4 +110,6 @@ PokemonDetails.getLayout = function (page: ReactElement) {
   return <PokemonLayout>{page}</PokemonLayout>
 }
 
-export default PokemonDetails
+export default withAuthUser<
+  InferGetServerSidePropsType<typeof getServerSideProps>
+>()(PokemonDetails)
