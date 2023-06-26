@@ -13,6 +13,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
   try {
     await setAuthCookies(req, res)
   } catch (error) {
+    console.log('Error: ', error)
     return res.status(500).json({ error: 'Unexpected error.', success: false })
   }
   return res.status(200).json({ success: true })

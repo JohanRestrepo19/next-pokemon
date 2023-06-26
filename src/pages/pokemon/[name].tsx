@@ -11,7 +11,7 @@ import { NextPageWithLayout } from '../_app'
 import { Pokemon } from '@/common/types'
 import Head from 'next/head'
 import {
-  useAuthUser,
+  AuthAction,
   withAuthUser,
   withAuthUserTokenSSR
 } from 'next-firebase-auth'
@@ -25,10 +25,9 @@ export const getServerSideProps: GetServerSideProps<{
   return { props: { pokemon: data } }
 })
 
-const PokemonDetails: NextPageWithLayout<
-  InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ pokemon }) => {
-  const authUser = useAuthUser()
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+
+const PokemonDetails: NextPageWithLayout<Props> = ({ pokemon }) => {
   const [isImgHovered, setIsImgHovered] = useState<boolean>(false)
 
   const imgSrc: string = useMemo(() => {
@@ -36,8 +35,6 @@ const PokemonDetails: NextPageWithLayout<
       return pokemon.sprites.other?.['official-artwork'].front_default || ''
     return pokemon.sprites.other?.dream_world.front_default || ''
   }, [isImgHovered, pokemon])
-
-  console.log('Auth user: ', authUser)
 
   return (
     <>
@@ -110,6 +107,6 @@ PokemonDetails.getLayout = function (page: ReactElement) {
   return <PokemonLayout>{page}</PokemonLayout>
 }
 
-export default withAuthUser<
-  InferGetServerSidePropsType<typeof getServerSideProps>
->()(PokemonDetails)
+export default withAuthUser<Props>({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN
+})(PokemonDetails)

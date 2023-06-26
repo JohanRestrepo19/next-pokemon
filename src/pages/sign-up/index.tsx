@@ -1,10 +1,28 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { AuthLayout } from '@/layouts/auth/Auth'
-import type { ReactNode } from 'react'
+import { useForm } from '@/hooks/useForm'
+
+import type { FormEvent, ReactNode } from 'react'
 import type { NextPageWithLayout } from '../_app'
 
 const SignUpPage: NextPageWithLayout = () => {
+  const { email, password, onInputChange } = useForm({
+    email: '',
+    password: ''
+  })
+
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault()
+    const res = await fetch('/api/login', {
+      body: JSON.stringify({ email, password }),
+      headers: { 'Content-Type': 'application/json', Authorization: '' },
+      method: 'POST'
+    })
+    const data = await res.json()
+    console.log('Server response: ', data)
+  }
+
   return (
     <>
       <Head>
@@ -12,19 +30,25 @@ const SignUpPage: NextPageWithLayout = () => {
       </Head>
 
       <div className="card w-96 bg-neutral shadow-2xl shadow-neutral">
-        <div className="card-body gap-y-4">
+        <form className="card-body gap-y-4" onSubmit={handleSubmit}>
           <h2 className="card-title">Sign Up</h2>
 
           <input
             type="text"
-            placeholder="Email "
+            placeholder="Email"
             className="input-bordered input w-full max-w-xs"
+            name="email"
+            value={email}
+            onChange={onInputChange}
           />
 
           <input
             type="password"
-            placeholder="Password "
+            placeholder="Password"
             className="input-bordered input w-full max-w-xs"
+            name="password"
+            value={password}
+            onChange={onInputChange}
           />
 
           <div className="card-actions flex-col items-center justify-center">
@@ -32,14 +56,14 @@ const SignUpPage: NextPageWithLayout = () => {
             <p className="text-center text-sm">
               Already have an account?{' '}
               <Link
-                href={'/sign-up'}
+                href={'/sign-in'}
                 className="text-secondary hover:underline"
               >
                 Sing in here
               </Link>
             </p>
           </div>
-        </div>
+        </form>
       </div>
     </>
   )
