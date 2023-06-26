@@ -16,20 +16,20 @@ const initAuth = () => {
     firebaseAuthEmulatorHost: '',
     firebaseAdminInitConfig: {
       credential: {
-        projectId: process.env.FIREBASE_PROJECT_ID || '',
+        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
         clientEmail: 'email@email.com',
         // The private key must not be accessible on the client side.
         privateKey: process.env.FIREBASE_PRIVATE_KEY || ''
       },
-      databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`
+      databaseURL: `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseio.com`
     },
     // Use application default credentials (takes precedence over firebaseAdminInitConfig if set)
     // useFirebaseAdminDefaultCredential: true,
     firebaseClientInitConfig: {
       apiKey: process.env.NEXT_PUBLIC_FIREBASE_APIKEY || '', // required
-      authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-      databaseURL: `https://${process.env.FIREBASE_PROJECT_ID}.firebaseio.com`,
-      projectId: process.env.FIREBASE_PROJECT_ID
+      authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+      databaseURL: `https://${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseio.com`,
+      projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
     },
     cookies: {
       name: 'pokemonAuth', // required
