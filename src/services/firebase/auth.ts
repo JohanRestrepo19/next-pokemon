@@ -12,7 +12,8 @@ export const signIn = async (
       password
     )
     return userCredential.user
-  } catch (error) {
+  } catch (error: any) {
     console.error('There was an error: ', error)
+    throw new Error(error.message)
   }
 }

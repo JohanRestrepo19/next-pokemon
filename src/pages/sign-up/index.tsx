@@ -1,27 +1,13 @@
 import Head from 'next/head'
 import Link from 'next/link'
 import { AuthLayout } from '@/layouts/auth/Auth'
-import { useForm } from '@/hooks/useForm'
 
-import type { FormEvent, ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import type { NextPageWithLayout } from '../_app'
+import { AuthAction, withAuthUser } from 'next-firebase-auth'
 
 const SignUpPage: NextPageWithLayout = () => {
-  const { email, password, onInputChange } = useForm({
-    email: '',
-    password: ''
-  })
-
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault()
-    const res = await fetch('/api/login', {
-      body: JSON.stringify({ email, password }),
-      headers: { 'Content-Type': 'application/json', Authorization: '' },
-      method: 'POST'
-    })
-    const data = await res.json()
-    console.log('Server response: ', data)
-  }
+  const handleSubmit = () => {}
 
   return (
     <>
@@ -37,18 +23,12 @@ const SignUpPage: NextPageWithLayout = () => {
             type="text"
             placeholder="Email"
             className="input-bordered input w-full max-w-xs"
-            name="email"
-            value={email}
-            onChange={onInputChange}
           />
 
           <input
             type="password"
             placeholder="Password"
             className="input-bordered input w-full max-w-xs"
-            name="password"
-            value={password}
-            onChange={onInputChange}
           />
 
           <div className="card-actions flex-col items-center justify-center">
@@ -73,4 +53,6 @@ SignUpPage.getLayout = (page: ReactNode) => {
   return <AuthLayout>{page}</AuthLayout>
 }
 
-export default SignUpPage
+export default withAuthUser<{}>({ whenAuthed: AuthAction.REDIRECT_TO_APP })(
+  SignUpPage
+)
