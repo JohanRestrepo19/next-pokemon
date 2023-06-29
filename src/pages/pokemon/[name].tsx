@@ -4,19 +4,21 @@ import {
   GetServerSidePropsContext,
   InferGetServerSidePropsType
 } from 'next'
-import Link from 'next/link'
-import Image from 'next/image'
-import { PokemonLayout } from '@/layouts/pokemon/Pokemon'
-import { NextPageWithLayout } from '../_app'
-import { Pokemon } from '@/common/types'
 import Head from 'next/head'
+import Image from 'next/image'
+import Link from 'next/link'
 import {
   AuthAction,
   withAuthUser,
   withAuthUserTokenSSR
 } from 'next-firebase-auth'
 
-//TODO: Search if it is better to use client-side-rendering.
+import { PokemonLayout } from '@/layouts/pokemon/Pokemon'
+import { NextPageWithLayout } from '../_app'
+
+import type { Pokemon } from '@/common/types'
+
+//TODO: Test if it is possible to remove withAuthUserTokenSSR.
 export const getServerSideProps: GetServerSideProps<{
   pokemon: Pokemon
 }> = withAuthUserTokenSSR()(async (ctx: GetServerSidePropsContext) => {

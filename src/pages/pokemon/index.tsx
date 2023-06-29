@@ -1,10 +1,12 @@
+import { ReactElement } from 'react'
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next'
 import Head from 'next/head'
-import { PokemonGrid } from '@/components/pokemon'
-import { PokemonMetaData } from '@/common/types'
-import { NextPageWithLayout } from '../_app'
-import { ReactElement } from 'react'
+import { AuthAction, withAuthUser } from 'next-firebase-auth'
 import { PokemonLayout } from '@/layouts/pokemon/Pokemon'
+import { PokemonGrid } from '@/components/pokemon'
+
+import type { PokemonMetaData } from '@/common/types'
+import type { NextPageWithLayout } from '../_app'
 
 type EndpointResponse = {
   count: number
@@ -21,9 +23,9 @@ export const getServerSideProps: GetServerSideProps<{
   return { props: { pokemons: data.results || [] } }
 }
 
-const PokemonPage: NextPageWithLayout<
-  InferGetServerSidePropsType<typeof getServerSideProps>
-> = ({ pokemons }) => {
+type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+
+const PokemonPage: NextPageWithLayout<Props> = ({ pokemons }) => {
   return (
     <>
       <Head>
@@ -40,4 +42,6 @@ PokemonPage.getLayout = function getLayout(page: ReactElement) {
   return <PokemonLayout>{page}</PokemonLayout>
 }
 
-export default PokemonPage
+export default withAuthUser<Props>({
+  whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN
+})(PokemonPage)
