@@ -1,5 +1,7 @@
 import { ReactElement, ReactNode } from 'react'
 import { NextPage } from 'next'
+import { QueryClientProvider, QueryClient } from 'react-query'
+
 import initAuth from '@/setup/firebase'
 import type { AppProps } from 'next/app'
 import '@/styles/globals.css'
@@ -14,7 +16,13 @@ type AppPropsWithLayout = AppProps & {
 
 initAuth()
 
+const queryClient = new QueryClient()
+
 export default function App({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? (page => page)
-  return getLayout(<Component {...pageProps} />)
+  return getLayout(
+    <QueryClientProvider client={queryClient}>
+      <Component {...pageProps} />
+    </QueryClientProvider>
+  )
 }

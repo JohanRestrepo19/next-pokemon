@@ -1,47 +1,49 @@
 import { ReactElement, useMemo, useState } from 'react'
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  InferGetServerSidePropsType
-} from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import Link from 'next/link'
-import {
-  AuthAction,
-  withAuthUser,
-  withAuthUserTokenSSR
-} from 'next-firebase-auth'
+import { AuthAction, withAuthUser } from 'next-firebase-auth'
+
+import { useRouter } from 'next/router'
+import { useQuery } from 'react-query'
 
 import { PokemonLayout } from '@/layouts/pokemon/Pokemon'
 import { NextPageWithLayout } from '../_app'
 
 import type { Pokemon } from '@/common/types'
 
-//TODO: Test if it is possible to remove withAuthUserTokenSSR.
-export const getServerSideProps: GetServerSideProps<{
-  pokemon: Pokemon
-}> = withAuthUserTokenSSR()(async (ctx: GetServerSidePropsContext) => {
-  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${ctx.query.name}`)
-  const data: Pokemon = await res.json()
-  return { props: { pokemon: data } }
-})
+const PokemonDetails: NextPageWithLayout<{}> = () => {
+  const router = useRouter()
 
-type Props = InferGetServerSidePropsType<typeof getServerSideProps>
+  const pokemonQuery = useQuery({
+    queryKey: ['pokmeon', router.query.name],
+    queryFn: async (): Promise<Pokemon> => {
+      const res = await fetch(
+        `https://pokeapi.co/api/v2/pokemon/${router.query.name}`
+      )
+      const pokemon: Pokemon = await res.json()
+      return pokemon
+    }
+  })
 
-const PokemonDetails: NextPageWithLayout<Props> = ({ pokemon }) => {
   const [isImgHovered, setIsImgHovered] = useState<boolean>(false)
 
   const imgSrc: string = useMemo(() => {
     if (!isImgHovered)
-      return pokemon.sprites.other?.['official-artwork'].front_default || ''
-    return pokemon.sprites.other?.dream_world.front_default || ''
-  }, [isImgHovered, pokemon])
+      return (
+        pokemonQuery.data?.sprites.other?.['official-artwork'].front_default ||
+        ''
+      )
+    return pokemonQuery.data?.sprites.other?.dream_world.front_default || ''
+  }, [isImgHovered, pokemonQuery.data])
+
+  if (pokemonQuery.isLoading) return <h1>Loading info...</h1>
+  if (pokemonQuery.isError) return <h1>There was an error</h1>
 
   return (
     <>
       <Head>
-        <title>{`${pokemon.name} Info`}</title>
+        <title>{`${pokemonQuery.data?.name} Info`}</title>
       </Head>
       <section className="flex justify-center">
         <div className="card glass w-96 shadow-2xl">
@@ -59,11 +61,11 @@ const PokemonDetails: NextPageWithLayout<Props> = ({ pokemon }) => {
             />
           </figure>
           <div className="card-body">
-            <h2 className="card-title capitalize">{pokemon.name}</h2>
+            <h2 className="card-title capitalize">{pokemonQuery.data?.name}</h2>
             <div>
               <p className="font-semibold">Abilities: </p>
               <ul className="list-disc">
-                {pokemon.abilities.map(ability => (
+                {pokemonQuery.data?.abilities.map(ability => (
                   <li className="ml-8" key={ability.ability.name}>
                     {ability.ability.name}
                   </li>
@@ -74,7 +76,7 @@ const PokemonDetails: NextPageWithLayout<Props> = ({ pokemon }) => {
 
               <p>
                 <strong>Base experience: </strong>
-                {pokemon.base_experience}
+                {pokemonQuery.data?.base_experience}
               </p>
 
               <br />
@@ -82,7 +84,7 @@ const PokemonDetails: NextPageWithLayout<Props> = ({ pokemon }) => {
               {/*Stats*/}
               <p className="font-semibold">Stats: </p>
               <ul className="list-disc">
-                {pokemon.stats.map(stat => (
+                {pokemonQuery.data?.stats.map(stat => (
                   <li className="ml-8" key={stat.stat.name}>
                     <strong>{stat.stat.name}:</strong> {stat.base_stat} -
                     <strong>Effort:</strong> {stat.effort}
@@ -109,6 +111,6 @@ PokemonDetails.getLayout = function (page: ReactElement) {
   return <PokemonLayout>{page}</PokemonLayout>
 }
 
-export default withAuthUser<Props>({
+export default withAuthUser<{}>({
   whenUnauthedAfterInit: AuthAction.REDIRECT_TO_LOGIN
 })(PokemonDetails)

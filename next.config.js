@@ -11,8 +11,8 @@ const nextConfig = {
       }
     ]
   },
-  async redirects() {
-    return [{ source: '/', destination: '/pokemon', permanent: true }]
+  async rewrites() {
+    return [{ source: '/', destination: '/pokemon' }]
   }
 }
 
