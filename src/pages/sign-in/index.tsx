@@ -6,12 +6,13 @@
 import { FormEvent } from 'react'
 import Head from 'next/head'
 import Link from 'next/link'
-import { AuthAction, useAuthUser, withAuthUser } from 'next-firebase-auth'
+import { AuthAction, withAuthUser } from 'next-firebase-auth'
 import { AuthLayout } from '@/layouts/auth/Auth'
 import { useForm } from '@/hooks/useForm'
 
 import type { ReactNode } from 'react'
 import type { NextPageWithLayout } from '../_app'
+
 import { signIn } from '@/services/firebase/auth'
 
 const SignInPage: NextPageWithLayout = () => {
@@ -22,7 +23,7 @@ const SignInPage: NextPageWithLayout = () => {
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault()
-    const firebaseUser = await signIn(email, password)
+    const firebaseUser = await signIn(email, password) // HACK: This is the reason why it is necessary to load firebase on the client.
     const userToken = (await firebaseUser?.getIdToken()) || 'unauthenticated'
     await fetch('/api/login', {
       body: JSON.stringify({ email, password }),
